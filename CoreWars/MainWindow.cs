@@ -41,7 +41,7 @@ namespace CoreWars
         // Texturas del suelo.
         readonly Dictionary<Ground, Texture2D> GTextures = new Dictionary<Ground, Texture2D>();
 
-        Ground[,] World = new Ground[16, 16];
+        Ground[,] World = new Ground[32, 32];
 
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace CoreWars
             {
                 for (int k = 0; k < World.GetLength(0); k++)
                 {
-                    World[j, k] = Ground.Aqua;
+                    World[j, k] = Ground.Grass;
                 }
             }
 
@@ -73,6 +73,12 @@ namespace CoreWars
             Input.Init(this);
             RenderFrame += MainWindow_RenderFrame;
             UpdateFrame += MainWindow_UpdateFrame;
+            MouseWheel += MainWindow_MouseWheel;
+        }
+
+        void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            currentView.Zoom += e.DeltaPrecise * 0.5f;
         }
 
         void MainWindow_UpdateFrame(object sender, FrameEventArgs e)
@@ -84,6 +90,8 @@ namespace CoreWars
             //    pos = currentView.ToWorld((pos));
             //    currentView.Move(pos, Tween.Quartic, 60);
             //}
+
+
             if (Input.KeyDown(Key.W))
             {
                 currentView.RelativeMove(new Vector2(0, -5), Tween.Quartic, 20);
@@ -127,13 +135,35 @@ namespace CoreWars
 
             SwapBuffers();
         }
+
+        /// <summary>
+        /// Enumera los distintos tipos de suelo del mundo.
+        /// </summary>
         public enum Ground : byte
         {
+            /// <summary>
+            /// Sin suelo (Usado internamente, no utilizar!)
+            /// </summary>
             Nothing,
+            /// <summary>
+            /// Hierba.
+            /// </summary>
             Grass,
+            /// <summary>
+            /// Agua.
+            /// </summary>
             Aqua,
+            /// <summary>
+            /// Ladrillos
+            /// </summary>
             Bricks,
+            /// <summary>
+            /// Carbono (Cool)
+            /// </summary>
             Carbon,
+            /// <summary>
+            /// Piso cerámico (para pruebas)
+            /// </summary>
             Piso
         }
     }
