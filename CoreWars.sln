@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreWars", "CoreWars\CoreWars.csproj", "{23762622-203F-4FF1-AB17-0438890F3DC5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pack", "Pack\Pack.csproj", "{32AE2B38-1E32-4988-9918-2AA2393BED05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +15,10 @@ Global
 		{23762622-203F-4FF1-AB17-0438890F3DC5}.Debug|x86.Build.0 = Debug|x86
 		{23762622-203F-4FF1-AB17-0438890F3DC5}.Release|x86.ActiveCfg = Release|x86
 		{23762622-203F-4FF1-AB17-0438890F3DC5}.Release|x86.Build.0 = Release|x86
+		{32AE2B38-1E32-4988-9918-2AA2393BED05}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{32AE2B38-1E32-4988-9918-2AA2393BED05}.Debug|x86.Build.0 = Debug|Any CPU
+		{32AE2B38-1E32-4988-9918-2AA2393BED05}.Release|x86.ActiveCfg = Release|Any CPU
+		{32AE2B38-1E32-4988-9918-2AA2393BED05}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
