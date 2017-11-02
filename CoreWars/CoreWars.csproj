@@ -36,6 +36,19 @@
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
+    <None Include="Assets\Textures\Arena\Aqua.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Textures\Arena\Bricks.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Textures\Arena\Grass.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Textures\Arena\piso.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Textures\Arena\Carbon.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindow.cs" />
@@ -43,8 +56,11 @@
     <Compile Include="Logic\Factions\Unit\Base.cs" />
     <Compile Include="Logic\Structure\TextureTree.cs" />
     <Compile Include="Logic\Structure\Texture2D.cs" />
-    <Compile Include="Logic\Structure\View.cs" />
+    <Compile Include="Logic\Structure\Camera.cs" />
     <Compile Include="Logic\Structure\Spritebatch.cs" />
+    <Compile Include="Logic\Structure\Input.cs" />
+    <Compile Include="Logic\Structure\Sprite.cs" />
+    <Compile Include="Logic\Structure\Tween.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Engine\" />
@@ -52,6 +68,9 @@
     <Folder Include="Logic\Factions\" />
     <Folder Include="Logic\Factions\Unit\" />
     <Folder Include="Logic\Structure\" />
+    <Folder Include="Assets\" />
+    <Folder Include="Assets\Textures\" />
+    <Folder Include="Assets\Textures\Arena\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

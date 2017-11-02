@@ -26,7 +26,10 @@ using OpenTK.Graphics.OpenGL;
 
 namespace CoreWars.Logic.Structure
 {
-    public class Spritebatch
+    /// <summary>
+    /// Motor de dibujado de Sprites.
+    /// </summary>
+    public static class Spritebatch
     {
         public static void Draw(Texture2D texture, Vector2 position)
         {
@@ -34,21 +37,28 @@ namespace CoreWars.Logic.Structure
         }
         public static void Draw(Texture2D texture, Vector2 position, Vector2 scale, Color color, Vector2 origin)
         {
-            Vector2[] vertices =
+            Vector2[] mapVerts =
             {
                 new Vector2(0,0),
                 new Vector2(1,0),
                 new Vector2(1,1),
                 new Vector2(0,1)
             };
+            Vector2[] drwVerts =
+            {
+                new Vector2(0.5f,0),
+                new Vector2(1,0.25f),
+                new Vector2(0.5f,0.5f),
+                new Vector2(0,0.25f)
+            };
             GL.BindTexture(TextureTarget.Texture2D, texture.ID);
 
             GL.Begin(PrimitiveType.Quads);
             GL.Color3(color);
-            foreach (var j in vertices)
+            for (int j = 0; j < 4; j++)
             {
-                GL.TexCoord2(j);
-                GL.Vertex2((((j * texture.Size) - origin) * scale) + position);
+                GL.TexCoord2(mapVerts[j]);
+                GL.Vertex2((((drwVerts[j] * texture.Size) - origin) * scale) + position);
             }
             GL.End();
         }
@@ -57,6 +67,21 @@ namespace CoreWars.Logic.Structure
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             GL.Ortho(-screenWidth / 2, screenWidth / 2, screenHeight / 2, -screenHeight / 2, 0f, 1f);
+        }
+
+        /// <summary>
+        /// Convierte los índices X y Y en coordenadas ortogonales.
+        /// </summary>
+        /// <returns>The ortho.</returns>
+        /// <param name="h">The x coordinate.</param>
+        /// <param name="v">The y coordinate.</param>
+        /// <param name="sze">Tamaño del bloque.</param>
+        public static Vector2 TranslateOrtho(int v, int h, int sze)
+        {
+            return new Vector2(
+                h * sze / 2f - (sze * v / 2f),
+                v * sze / 4f + (sze * h / 4f)
+            );
         }
     }
 }

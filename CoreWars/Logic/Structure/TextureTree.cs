@@ -19,8 +19,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#define LoadOnUse
+
 using System.IO;
 using System.Collections.Generic;
+
+#if !LoadOnUse
+using System.Linq;
+#endif
 
 namespace CoreWars.Logic.Structure
 {
@@ -29,15 +35,19 @@ namespace CoreWars.Logic.Structure
     /// </summary>
     public struct TextureTree
     {
-        static Texture2D[] GetTextures(string o, DirectoryInfo roth)
+        /// <summary>
+        /// Carga las texturas de un directorio.
+        /// </summary>
+        /// <returns>The textures.</returns>
+        /// <param name="g">Grupo a cargar.</param>
+        /// <param name="roth">Raíz en dónde buscar las texturas.</param>
+        static IEnumerable<Texture2D> GetTextures(string g, DirectoryInfo roth)
         {
-            var ret = new List<Texture2D>();
-            foreach (var j in roth.GetFiles($"{o}*.png"))
-            {
-                ret.Add(new Texture2D(j.FullName));
-            }
-            return ret.ToArray();
+            foreach (var j in roth.GetFiles($"{g}*.png"))
+                yield return new Texture2D(j.FullName);
         }
+
+#if LoadOnUse
         /// <summary>
         /// Inicializa una nueva instancia de la clase <see cref="TextureTree"/>
         /// cargando las texturas correspondientes al Sprite.
@@ -51,6 +61,46 @@ namespace CoreWars.Logic.Structure
             Side = GetTextures(nameof(Side), roth);
             SideUp = GetTextures(nameof(SideUp), roth);
             SideDown = GetTextures(nameof(SideDown), roth);
+        }
+        /// <summary>
+        /// Grupo de texturas de animación con el objeto en dirección hacia
+        /// arriba.
+        /// </summary>
+        public readonly IEnumerable<Texture2D> Up;
+        /// <summary>
+        /// Grupo de texturas de animación con el objeto en dirección hacia
+        /// abajo.
+        /// </summary>
+        public readonly IEnumerable<Texture2D> Down;
+        /// <summary>
+        /// Grupo de texturas de animación con el objeto en dirección hacia los
+        /// lados (definidas en dirección hacia la derecha).
+        /// </summary>
+        public readonly IEnumerable<Texture2D> Side;
+        /// <summary>
+        /// Grupo de texturas de animación con el objeto en dirección diagonal
+        /// hacia arriba a la derecha.
+        /// </summary>
+        public readonly IEnumerable<Texture2D> SideUp;
+        /// <summary>
+        /// Grupo de texturas de animación con el objeto en dirección diagonal
+        /// hacia abajo a la derecha.
+        /// </summary>
+        public readonly IEnumerable<Texture2D> SideDown;
+#else
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase <see cref="TextureTree"/>
+        /// cargando las texturas correspondientes al Sprite.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public TextureTree(string path)
+        {
+            DirectoryInfo roth = new DirectoryInfo(path);
+            Up = GetTextures(nameof(Up), roth).ToArray();
+            Down = GetTextures(nameof(Down), roth).ToArray();
+            Side = GetTextures(nameof(Side), roth).ToArray();
+            SideUp = GetTextures(nameof(SideUp), roth).ToArray();
+            SideDown = GetTextures(nameof(SideDown), roth).ToArray();
         }
         /// <summary>
         /// Grupo de texturas de animación con el objeto en dirección hacia
@@ -77,5 +127,6 @@ namespace CoreWars.Logic.Structure
         /// hacia abajo a la derecha.
         /// </summary>
         public readonly Texture2D[] SideDown;
+#endif
     }
 }

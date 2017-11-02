@@ -29,54 +29,112 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using CoreWars.Logic.Structure;
+using System.Collections.Generic;
 
 namespace CoreWars
 {
     public class MainWindow : GameWindow
     {
-        // Note to self: Las texturas no se pueden cargar aquí, tienen que
-        // cargarse en el constructor.
-        Texture2D t;
-        View view;
+
+        readonly Camera currentView;
+
+        // Texturas del suelo.
+        readonly Dictionary<Ground, Texture2D> GTextures = new Dictionary<Ground, Texture2D>();
+
+        Ground[,] World = new Ground[16, 16];
+
 
         /// <summary>
         /// Inicializa una nueva instancia de la clase <see cref="MainWindow"/>.
         /// </summary>
         public MainWindow()
         {
-            t = new Texture2D("/home/thexds/src/CoreWars/CoreWars/sample.png");
             GL.Enable(EnableCap.Texture2D);
-            view = new View(Vector2.Zero);
-            Mouse.ButtonDown += Mouse_ButtonDown;
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+            // Cargar texturas...
+            GTextures.Add(Ground.Grass, new Texture2D("Assets/Textures/Arena/Grass.jpg"));
+            GTextures.Add(Ground.Aqua, new Texture2D("Assets/Textures/Arena/Aqua.jpg"));
+            GTextures.Add(Ground.Bricks, new Texture2D("Assets/Textures/Arena/Bricks.png"));
+            GTextures.Add(Ground.Carbon, new Texture2D("Assets/Textures/Arena/Carbon.png"));
+            GTextures.Add(Ground.Piso, new Texture2D("Assets/Textures/Arena/p.png"));
+
+            // Inicializar mundo...
+            for (int j = 0; j < World.GetLength(1); j++)
+            {
+                for (int k = 0; k < World.GetLength(0); k++)
+                {
+                    World[j, k] = Ground.Aqua;
+                }
+            }
+
+            currentView = new Camera(1.5f);
+            Input.Init(this);
             RenderFrame += MainWindow_RenderFrame;
             UpdateFrame += MainWindow_UpdateFrame;
-
-        }
-
-        void Mouse_ButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            Vector2 pos = new Vector2(e.Position.X, e.Position.Y);
-            pos -= new Vector2(Width, Height) / 2;
-            pos = view.ToWorld((pos));
-            view.SetPosition(pos, TweenType.Quartic, 60);
         }
 
         void MainWindow_UpdateFrame(object sender, FrameEventArgs e)
         {
-            view.Update();
+            //if (Input.MousePress(MouseButton.Left))
+            //{
+            //    Vector2 pos = new Vector2(Mouse.X, Mouse.Y);
+            //    pos -= new Vector2(Width, Height) / 2;
+            //    pos = currentView.ToWorld((pos));
+            //    currentView.Move(pos, Tween.Quartic, 60);
+            //}
+            if (Input.KeyDown(Key.W))
+            {
+                currentView.RelativeMove(new Vector2(0, -5), Tween.Quartic, 20);
+            }
+            if (Input.KeyDown(Key.S))
+            {
+                currentView.RelativeMove(new Vector2(0, 5), Tween.Quartic, 20);
+            }
+            if (Input.KeyDown(Key.A))
+            {
+                currentView.RelativeMove(new Vector2(-5, 0), Tween.Quartic, 20);
+            }
+            if (Input.KeyDown(Key.D))
+            {
+                currentView.RelativeMove(new Vector2(5, 0), Tween.Quartic, 20);
+            }
+            currentView.Update();
+            Input.Update();
         }
 
         void MainWindow_RenderFrame(object sender, FrameEventArgs e)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
-            GL.ClearColor(Color.SkyBlue);
+            GL.ClearColor(Color.Black);
 
             Spritebatch.Begin(Width, Height);
-            view.ApplyTransform();
+            currentView.ApplyTransform();
 
-            Spritebatch.Draw(t, Vector2.Zero);
+            // Dibujar el mundo...
+            for (int j = 0; j < World.GetLength(1); j++)
+            {
+                for (int k = 0; k < World.GetLength(0); k++)
+                {
+                    if (GTextures.ContainsKey(World[j, k]))
+                    {
+                        Texture2D t = GTextures[World[j, k]];
+                        Spritebatch.Draw(t, Spritebatch.TranslateOrtho(j, k, t.Height));
+                    }
+                }
+            }
 
             SwapBuffers();
+        }
+        public enum Ground : byte
+        {
+            Nothing,
+            Grass,
+            Aqua,
+            Bricks,
+            Carbon,
+            Piso
         }
     }
 }

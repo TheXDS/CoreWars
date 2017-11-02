@@ -82,18 +82,16 @@ namespace CoreWars.Logic.Structure
                 bmp = new Drw.Bitmap(64, 64, Img.PixelFormat.Format32bppArgb);
                 var g = Drw.Graphics.FromImage(bmp);
                 var p = new Drw.Pen(Drw.Color.White, 2);
-                g.DrawRectangle(p, 1, 1, 63, 63);
-                g.DrawLine(p, 1, 1, 63, 63);
-                g.DrawLine(p, 1, 63, 63, 1);
+                g.DrawRectangle(p, 1, 1, 62, 62);
+                g.DrawLine(p, 1, 1, 62, 62);
+                g.DrawLine(p, 1, 62, 62, 1);
                 g.Dispose();
             }
             Width = bmp.Width;
             Height = bmp.Height;
-
             Img.BitmapData data = bmp.LockBits(
                 new Drw.Rectangle(0, 0, Width, Height),
-                Img.ImageLockMode.ReadOnly,
-                Img.PixelFormat.Format32bppArgb);
+                Img.ImageLockMode.ReadOnly, Img.PixelFormat.Format32bppArgb);
             GL.TexImage2D(
                 TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
                 data.Width, data.Height, 0,
@@ -102,7 +100,7 @@ namespace CoreWars.Logic.Structure
             bmp.UnlockBits(data);
             GL.TexParameter(
                 TextureTarget.Texture2D,
-                TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
+                TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
