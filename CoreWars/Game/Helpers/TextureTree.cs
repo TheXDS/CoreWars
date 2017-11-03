@@ -23,6 +23,7 @@
 
 using System.IO;
 using System.Collections.Generic;
+using CoreWars.Engine;
 
 #if !LoadOnUse
 using System.Linq;

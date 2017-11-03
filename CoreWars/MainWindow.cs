@@ -20,151 +20,155 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Windows;
 using System.Drawing;
-using System.Diagnostics;
-
+using CoreWars.Engine;
+using CoreWars.Game.Helpers;
+using CoreWars.Game.Objects;
+using CoreWars.Game.Objects.Primitives;
 using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using CoreWars.Logic.Structure;
-using System.Collections.Generic;
+using static CoreWars.Engine.ExtraMath;
 
 namespace CoreWars
 {
     public class MainWindow : GameWindow
     {
-
         readonly Camera currentView;
-
-        // Texturas del suelo.
-        readonly Dictionary<Ground, Texture2D> GTextures = new Dictionary<Ground, Texture2D>();
-
-        Ground[,] World = new Ground[32, 32];
-
+        readonly World w;
+        readonly Input i;
+        float xsize, ysize;
 
         /// <summary>
         /// Inicializa una nueva instancia de la clase <see cref="MainWindow"/>.
         /// </summary>
         public MainWindow()
         {
+            Title = "CoreWars";
+            //WindowState = WindowState.Fullscreen;
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            // Cargar texturas...
-            GTextures.Add(Ground.Grass, new Texture2D("Assets/Textures/Arena/Grass.jpg"));
-            GTextures.Add(Ground.Aqua, new Texture2D("Assets/Textures/Arena/Aqua.jpg"));
-            GTextures.Add(Ground.Bricks, new Texture2D("Assets/Textures/Arena/Bricks.png"));
-            GTextures.Add(Ground.Carbon, new Texture2D("Assets/Textures/Arena/Carbon.png"));
-            GTextures.Add(Ground.Piso, new Texture2D("Assets/Textures/Arena/p.png"));
+            w = new World(32, Ground.piso, PointState.Explored);
 
-            // Inicializar mundo...
-            for (int j = 0; j < World.GetLength(1); j++)
-            {
-                for (int k = 0; k < World.GetLength(0); k++)
-                {
-                    World[j, k] = Ground.Grass;
-                }
-            }
+            xsize = WorldRender.TileSize * w.Size;
+            ysize = xsize / 2;
 
-            currentView = new Camera(1.5f);
-            Input.Init(this);
-            RenderFrame += MainWindow_RenderFrame;
+            currentView = new Camera();
+            i = new Input(this);
+
+
             UpdateFrame += MainWindow_UpdateFrame;
             MouseWheel += MainWindow_MouseWheel;
+            Resize += MainWindow_Resize;
+            RenderFrame += MainWindow_RenderFrame;
+
+
+            // Área de pruebas...
+            //for (int j = 5; j < 8; j++)
+            //{
+            //    for (int k = 5; k < 8; k++)
+            //    {
+            //        Exploration[j, k] = TileState.Active;
+            //    }
+            //}
+            //for (int j = 15; j < 18; j++)
+            //{
+            //    for (int k = 15; k < 18; k++)
+            //    {
+            //        Exploration[j, k] = TileState.Explored;
+            //    }
+            //}
+
+        }
+
+        void MainWindow_Resize(object sender, EventArgs e)
+        {
+            GL.Viewport(ClientRectangle);
         }
 
         void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            currentView.Zoom += e.DeltaPrecise * 0.5f;
+            currentView.RelativeZoom(e.DeltaPrecise * 0.125f, Tween.Quartic, 20);
         }
 
         void MainWindow_UpdateFrame(object sender, FrameEventArgs e)
         {
-            //if (Input.MousePress(MouseButton.Left))
-            //{
-            //    Vector2 pos = new Vector2(Mouse.X, Mouse.Y);
-            //    pos -= new Vector2(Width, Height) / 2;
-            //    pos = currentView.ToWorld((pos));
-            //    currentView.Move(pos, Tween.Quartic, 60);
-            //}
+            if (i.KeyDown(Key.A))
+            {
+                Vector2 v = currentView.ToAbsolute(new Vector2(-5, 0));
+                if (v.Y < ysize) v.Y = v.Y.Clamp(ysize - (1 - (v.X / -xsize)) * ysize, ysize);
+                else v.Y = v.Y.Clamp(ysize, ysize + (1 - (v.X / -xsize)) * ysize);
+                v.X = v.X.Clamp(-xsize, xsize);
+                currentView.Move(v, Tween.Quartic, 20);
+            }
+            if (i.KeyDown(Key.D))
+            {
+                Vector2 v = currentView.ToAbsolute(new Vector2(5, 0));
+                if (v.Y < ysize) v.Y = v.Y.Clamp(ysize - (1 - (v.X / xsize)) * ysize, ysize);
+                else v.Y = v.Y.Clamp(ysize, ysize + (1 - (v.X / xsize)) * ysize);
+                v.X = v.X.Clamp(-xsize, xsize);
+                currentView.Move(v, Tween.Quartic, 20);
+            }
+            if (i.KeyDown(Key.W))
+            {
+                Vector2 v = currentView.ToAbsolute(new Vector2(0, -2.5f));
+                if (v.X < 0) v.X = v.X.Clamp(v.Y * -2, 0);
+                else v.X = v.X.Clamp(0, v.Y * 2);
+                v.Y = v.Y.Clamp(0, xsize);
+                currentView.Move(v, Tween.Quartic, 20);
+            }
+            if (i.KeyDown(Key.S))
+            {
+                Vector2 v = currentView.ToAbsolute(new Vector2(0, 2.5f));
+                if (v.X < 0) v.X = v.X.Clamp(((v.Y * -2) + xsize * 2) * -1, 0);
+                else v.X = v.X.Clamp(0, (v.Y * -2) + xsize * 2);
+                v.Y = v.Y.Clamp(0, xsize);
+                currentView.Move(v, Tween.Quartic, 20);
+            }
+
+            // Actualizar terreno activo/explorado
+            // TODO: esto debería realizarse sólo al mover unidades.
+            for (int j = 1; j < w.Size - 1; j++)
+            {
+                for (int k = 1; k < w.Size - 1; k++)
+                {
+                    Color c = w.Points[j, k].Color;
+                    w.Tiles[j - 1, k - 1].VColors[2] = c;
+                    w.Tiles[j, k - 1].VColors[1] = c;
+                    w.Tiles[j - 1, k].VColors[3] = c;
+                    w.Tiles[j, k].VColors[0] = c;
+                }
+            }
 
 
-            if (Input.KeyDown(Key.W))
-            {
-                currentView.RelativeMove(new Vector2(0, -5), Tween.Quartic, 20);
-            }
-            if (Input.KeyDown(Key.S))
-            {
-                currentView.RelativeMove(new Vector2(0, 5), Tween.Quartic, 20);
-            }
-            if (Input.KeyDown(Key.A))
-            {
-                currentView.RelativeMove(new Vector2(-5, 0), Tween.Quartic, 20);
-            }
-            if (Input.KeyDown(Key.D))
-            {
-                currentView.RelativeMove(new Vector2(5, 0), Tween.Quartic, 20);
-            }
+
+
+
+            if (i.KeyPress(Key.R))
+                currentView.Move(Vector2.Zero, Tween.Linear, 1);
+
             currentView.Update();
-            Input.Update();
+            i.Update();
         }
 
         void MainWindow_RenderFrame(object sender, FrameEventArgs e)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.ClearColor(Color.Black);
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            GL.Ortho(-Width / 2, Width / 2, Height / 2, -Height / 2, 0f, 1f);
 
-            Spritebatch.Begin(Width, Height);
+
             currentView.ApplyTransform();
 
             // Dibujar el mundo...
-            for (int j = 0; j < World.GetLength(1); j++)
-            {
-                for (int k = 0; k < World.GetLength(0); k++)
-                {
-                    if (GTextures.ContainsKey(World[j, k]))
-                    {
-                        Texture2D t = GTextures[World[j, k]];
-                        Spritebatch.Draw(t, Spritebatch.TranslateOrtho(j, k, t.Height));
-                    }
-                }
-            }
+            WorldRender.Render(w);
+
 
             SwapBuffers();
-        }
-
-        /// <summary>
-        /// Enumera los distintos tipos de suelo del mundo.
-        /// </summary>
-        public enum Ground : byte
-        {
-            /// <summary>
-            /// Sin suelo (Usado internamente, no utilizar!)
-            /// </summary>
-            Nothing,
-            /// <summary>
-            /// Hierba.
-            /// </summary>
-            Grass,
-            /// <summary>
-            /// Agua.
-            /// </summary>
-            Aqua,
-            /// <summary>
-            /// Ladrillos
-            /// </summary>
-            Bricks,
-            /// <summary>
-            /// Carbono (Cool)
-            /// </summary>
-            Carbon,
-            /// <summary>
-            /// Piso cerámico (para pruebas)
-            /// </summary>
-            Piso
         }
     }
 }

@@ -36,41 +36,58 @@
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
-    <None Include="Assets\Textures\Arena\Aqua.jpg">
+    <None Include="Assets\Textures\World\Aqua.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Textures\Arena\Bricks.png">
+    <None Include="Assets\Textures\World\Bricks.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Textures\Arena\Grass.jpg">
+    <None Include="Assets\Textures\World\Bricks2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Textures\Arena\piso.png">
+    <None Include="Assets\Textures\World\Carbon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Textures\Arena\Carbon.png" />
+    <None Include="Assets\Textures\World\Grass.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Textures\World\Lines.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Textures\World\piso.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Textures\World\Rock.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindow.cs" />
     <Compile Include="Application.cs" />
-    <Compile Include="Logic\Factions\Unit\Base.cs" />
-    <Compile Include="Logic\Structure\TextureTree.cs" />
-    <Compile Include="Logic\Structure\Texture2D.cs" />
-    <Compile Include="Logic\Structure\Camera.cs" />
-    <Compile Include="Logic\Structure\Spritebatch.cs" />
-    <Compile Include="Logic\Structure\Input.cs" />
-    <Compile Include="Logic\Structure\Sprite.cs" />
-    <Compile Include="Logic\Structure\Tween.cs" />
+    <Compile Include="Game\Factions\Unit\Base.cs" />
+    <Compile Include="Game\Helpers\TextureTree.cs" />
+    <Compile Include="Game\Helpers\WorldRender.cs" />
+    <Compile Include="Game\Helpers\Sprite.cs" />
+    <Compile Include="Engine\ExtraMath.cs" />
+    <Compile Include="Engine\Camera.cs" />
+    <Compile Include="Engine\Input.cs" />
+    <Compile Include="Engine\Texture2D.cs" />
+    <Compile Include="Game\Objects\World.cs" />
+    <Compile Include="Game\Objects\Primitives\PointState.cs" />
+    <Compile Include="Game\Objects\Primitives\Ground.cs" />
+    <Compile Include="Game\Objects\Primitives\WorldTile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Engine\" />
-    <Folder Include="Logic\" />
-    <Folder Include="Logic\Factions\" />
-    <Folder Include="Logic\Factions\Unit\" />
-    <Folder Include="Logic\Structure\" />
+    <Folder Include="Game\" />
+    <Folder Include="Game\Factions\" />
+    <Folder Include="Game\Factions\Unit\" />
+    <Folder Include="Game\Helpers\" />
     <Folder Include="Assets\" />
     <Folder Include="Assets\Textures\" />
-    <Folder Include="Assets\Textures\Arena\" />
+    <Folder Include="Assets\Textures\World\" />
+    <Folder Include="Game\Objects\" />
+    <Folder Include="Game\Objects\Primitives\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

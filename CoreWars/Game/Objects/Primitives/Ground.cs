@@ -1,5 +1,5 @@
 ﻿//
-//  Application.cs
+//  Ground.cs
 //
 //  Author:
 //       César Andrés Morgan <xds_xps_ivx@hotmail.com>
@@ -19,39 +19,37 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace CoreWars
+namespace CoreWars.Game.Objects.Primitives
 {
     /// <summary>
-    /// Clase estática que administra el punto de entrada de la aplicación.
+    /// Enumera los distintos tipos de suelo del mundo.
     /// </summary>
-    public class Application
+    public enum Ground : byte
     {
-        static Application instance;
         /// <summary>
-        /// Punto de entrada del programa.
+        /// Sin suelo (Usado internamente, no utilizar!)
         /// </summary>
-        public static void Main()
-        {
-            if (instance == null)
-            {
-                instance = new Application();
-                instance.window.Run();
-                instance.window.Dispose();
-            }
-            else
-            {
-                instance.window.WindowState = OpenTK.WindowState.Fullscreen;
-            }
-        }
+        Nothing,
+        /// <summary>
+        /// Hierba.
+        /// </summary>
+        Grass,
+        /// <summary>
+        /// Agua.
+        /// </summary>
+        Aqua,
+        /// <summary>
+        /// Ladrillos
+        /// </summary>
+        Bricks,
+        Bricks2,
+        /// <summary>
+        /// Carbono (Cool)
+        /// </summary>
+        Carbon,
 
-        readonly MainWindow window;
-        /// <summary>
-        /// Inicializa una nueva instancia de la clase 
-        /// <see cref="Application"/>.
-        /// </summary>
-        public Application()
-        {
-            window = new MainWindow();
-        }
+        Lines,
+        piso,
+        Rock
     }
 }

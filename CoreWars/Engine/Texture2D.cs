@@ -1,5 +1,5 @@
 ﻿//
-//  TextureTree.cs
+//  Texture2D.cs
 //
 //  Author:
 //       César Andrés Morgan <xds_xps_ivx@hotmail.com>
@@ -25,7 +25,7 @@ using Drw = System.Drawing;
 using GL = OpenTK.Graphics.OpenGL.GL;
 using Img = System.Drawing.Imaging;
 
-namespace CoreWars.Logic.Structure
+namespace CoreWars.Engine
 {
     /// <summary>
     /// Representa una textura de mapa de bits bidimensional cargada en OpenGL.
